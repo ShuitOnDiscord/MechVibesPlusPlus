@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <title>Home | Mechvibes++</title>
+    <link rel="shortcut icon" type="image/png" href="../images/icon.png" />
+    <link rel="stylesheet" href="../css/milligram.min.css" />
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/app.css" />
+  </head>
+  <body id="overall-body">
+    <div id="navbar">
+        <a href="index.html"><img src="../images/icon_svgs/home.svg" alt="Home"></a>
+        <a href="soundpacks.html"><img src="../images/icon_svgs/soundpacks.svg" alt="Sounds"></a>
+        <a href="editor.html"><img src="../images/icon_svgs/editor.svg" alt="Editor"></a>
+        <a href="settings.html"><img src="../images/icon_svgs/settings.svg" alt="Settings"></a>
+    </div>
+    <div class="main" style="translate: 0px 9px">
+        <div id="app-logo">
+            <div id="logo">Loading...</div>
+        </div>
+        <div id="app-body" class="loading">
+          <table style="display: table">
+            <tbody>
+              <tr>
+                <td colspan="2">
+                  <select id="keyboardpack-list" class="custom-input mb-0" style="width: 100%; margin-right: 10px; background-color:#1f1f1f; color:#adadad"></select>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <select id="mousepack-list" class="custom-input mb-0 hidden" style="width: 100%; margin-right: 10px; background-color:#1f1f1f; color:#adadad"></select>
+                  <div style="text-align: right">
+                    <small>
+                      <a href="https://discord.gg/NzeXc8gMWW" class="open-in-browser">Join our Discord.</a>
+                    </small>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td id="KeyVolSlider" style="width: 50%; color:#ebebeb"; color=>Keyboard Volume <span id="keyboard-volume-value-display" style="font-weight: bold; color:#ebebeb"></span></td>
+                <td style="width: 50%">
+                  <input type="range" min="0" max="100" value="20" step="1" class="slider mb-0" id="keyvolume" style="width: 100%" />
+                </td>
+              </tr>
+              <tr>
+                <td id="MouseVolSlider" class="hidden" style="width: 50%; color:#ebebeb"; color=>Mouse Volume <span id="mouse-volume-value-display" class="hidden" style="font-weight: bold; color:#ebebeb"></span></td>
+                <td style="width: 50%">
+                  <input type="range" min="0" max="100" value="20" step="1" class="slider mb-0 hidden" id="mousevolume" style="width: 100%" />
+                </td>
+              </tr>
+              <tr>
+                <td id="CPSSlider" class="" style="width: 50%; color:#ebebeb"; color=>CPS Slider <span id="CPS-value-display" class="" style="font-weight: bold; color:#ebebeb"></span></td>
+                <td style="width: 50%">
+                  <input type="range" min="0" max="20" value="10" step="0.5" class="slider mb-0" id="CPS" style="width: 100%" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="divider"></div>
+          <div style="color: #ebebeb; font-size: 12px; text-align: center">
+          <p>Made with ❤ by <a href="https://github.com/PyroCalzone/MechVibesPlusPlus" class="open-in-browser">Pyro & Saturn</a></p>
+          <p>
+              <a href="https://mechvibes.com" class="open-in-browser">Support Original Mechvibes</a>
+              &nbsp;&nbsp;|&nbsp;&nbsp;
+              <a href="https://github.com/PyroCalzone/MechVibesPlusPlus" class="open-in-browser">Our GitHub</a>
+              &nbsp;&nbsp;|&nbsp;&nbsp;
+              <a href="https://ko-fi.com/pyrodevelopment" class="open-in-browser">Buy me a coffee</a>
+          </p>  
+          <p id="app-version" style="color: #9b9b9b">-</p>
+          <div id="update-available" class="hidden">
+          New version of MechvibesPlusPlus is available (<span id="new-version">-</span>)
+          <div style="margin-top: 5px">
+              <a href="https://github.com/PyroCalzone/MechVibesPlusPlus/releases/latest" class="open-in-browser">View Update on GitHub</a>
+          </div>
+        </div>
+      </div>
+      <div id="soundpack-bug" class="hidden" style="position:relative; top:10px">
+        <!-- OLD: One or more of your soundpacks are broken. They have not been loaded. -->
+        We have caught an error, if this reoccurs one or more of your soundpacks may be broken.<br>
+        Otherwise, you can safely ignore this message.
+      </div>
+      <div id="mouseSounds" class="hidden" style="position:relative; top:20px">
+        Mouse Sounds are disabled, to enable them please check settings.
+      </div>
+    </div>
+  </body>
+</html>

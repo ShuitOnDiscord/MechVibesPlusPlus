@@ -1,0 +1,38 @@
+#navbar {
+    z-index: 2;
+    transform: translate(0px, calc(-100% - 5px));
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    position: absolute;
+    left:0px;
+    width: inherit;
+    height: 60px;
+    background-color: #121212;
+    padding-bottom: 5px;
+    border-bottom: 3px solid #6b6b6b;
+    border-radius: 0px 0px 15px 15px;
+    transition: 0.5s;
+}
+#navbar:hover {
+    transform: translate(0px, -16px);
+}
+
+#navbar a {
+    height:48px;
+    width:48px;
+    text-decoration: none;
+    align-items: center;
+    font-size: 25px;
+    filter: invert(44%) sepia(0%) saturate(0%) hue-rotate(211deg) brightness(91%) contrast(82%);
+    /* #6b6b6b */
+    display: block;
+    transition: 0.3s;
+}
+
+/* https://codepen.io/sosuke/pen/Pjoqqp */
+#navbar a:hover {
+    filter: brightness(0%) saturate(100%) invert(99%) sepia(39%) saturate(215%) hue-rotate(130deg) brightness(120%) contrast(84%);
+    /* #ebebeb */
+    scale: 115% 115%;
+}

@@ -11,22 +11,22 @@ const glob = require('glob');
 const iohook = require('iohook');
 const path = require('path');
 const { platform } = process;
-const remapper = require('./utils/remapper');
+const remapper = require('../applicationjs/remapper.js');
 
 const MV_KEYBOARD_PACK_LSID = 'mechvibes-pack';
 const MV_MOUSE_PACK_LSID = 'mechvibes-mousepack';
 const MV_KEY_VOL_LSID = 'mechvibes-volume-keyboard';
 const MV_MOUSE_VOL_LSID = 'mechvibes-volume-mouse';
+const MV_CPS_LSID = 'mechvibes-cps';
 
 const KEYBOARD_CUSTOM_PACKS_DIR = remote.getGlobal('keyboardcustom_dir');
-const KEYBOARD_OFFICIAL_PACKS_DIR = path.join(__dirname, 'sounds/keys');
+const KEYBOARD_OFFICIAL_PACKS_DIR = path.join(__dirname, '../../sounds/keys');
 const MOUSE_CUSTOM_PACKS_DIR = remote.getGlobal('mousecustom_dir');
-const MOUSE_OFFICIAL_PACKS_DIR = path.join(__dirname, 'sounds/mouse');
+const MOUSE_OFFICIAL_PACKS_DIR = path.join(__dirname, '../../sounds/mouse');
 const APP_VERSION = remote.getGlobal('app_version');
 
 let current_keyboard_pack = null;
 let current_mouse_pack = null;
-let current_key_down = null;
 let current_sound_key = null;
 let current_mouse_down = null;
 let is_muted = store.get('mechvibes-muted') || false;
@@ -179,6 +179,7 @@ async function loadPacks(status_display_elem, app_body) {
     });
 
   // end load
+  console.log("Finished load")
   return fucked;
 }
 
@@ -188,11 +189,13 @@ async function loadPacks(status_display_elem, app_body) {
 function checkIfAllSoundLoaded(status_display_elem, app_body) {
   Object.keys(all_sound_files).map((key) => {
     if (!all_sound_files[key]) {
+      console.log(`Missing ${all_sound_files[key]}`)
       return false;
     }
   });
   status_display_elem.innerHTML = 'Mechvibes++';
   app_body.classList.remove('loading');
+  console.log("AllSound Loaded")
   return true;
 }
 
@@ -211,7 +214,6 @@ function keycodesRemap(defines) {
 // get pack by id,
 // if id is null,
 // get saved pack
-
 var packs = null
 function getPack(korm, pack_id = null) {
   if (!pack_id) {
@@ -314,12 +316,17 @@ function packsToOptions(packs, pack_list, korm) {
     const soundpackbug = document.getElementById('soundpack-bug');
     const mouseNotification = document.getElementById('mouseSounds');
     const ApplicationBody = document.getElementById('overall-body');
+    const cps_slider = document.getElementById('CPSSlider');
+    const cps_value = document.getElementById('CPS-value-display');
+    const cps = document.getElementById('CPS');
 
     // set app version
     version.innerHTML = APP_VERSION;
 
     // load all packs
     var fuckcheck = await loadPacks(app_logo, app_body);
+
+    console.log(fuckcheck)
 
     if(fuckcheck){
       soundpackbug.classList.remove('hidden');
@@ -328,6 +335,14 @@ function packsToOptions(packs, pack_list, korm) {
     // transform packs to options list
     packsToOptions(keyboardpacks, keyboardpack_list, 'keyboard');
     packsToOptions(mousepacks, mousepack_list, 'mouse');
+
+    if (current_keyboard_pack == null){
+      keyboardpack_list.selectedIndex = -1;
+    }
+
+    if (current_mouse_pack == null){
+      mousepack_list.selectedIndex = -1;
+    }
 
     // check for new version
     fetch('https://api.github.com/repos/PyroCalzone/MechVibesPlusPlus/releases/latest')
@@ -348,13 +363,18 @@ function packsToOptions(packs, pack_list, korm) {
     });
 
     // get last selected pack
-    current_keyboard_pack = getPack('keyboard');
-    current_mouse_pack = getPack('mouse');
+    try {
+      current_keyboard_pack = getPack('keyboard');
+      current_mouse_pack = getPack('mouse');
+    } catch {
+      soundpackbug.classList.remove('hidden');
+    };
 
     // display volume value
     if (store.get(MV_KEY_VOL_LSID)) {
       volume.value = store.get(MV_KEY_VOL_LSID);
-    }
+    };
+
     volume_value.innerHTML = volume.value;
     volume.oninput = function (e) {
       volume_value.innerHTML = this.value;
@@ -370,14 +390,24 @@ function packsToOptions(packs, pack_list, korm) {
       store.set(MV_MOUSE_VOL_LSID, this.value);
     };
 
+    //display cps value
+    if (store.get(MV_CPS_LSID)) {
+      cps.value = store.get(MV_CPS_LSID);
+    }
+    cps_value.innerHTML = cps.value;
+    cps.oninput = function (e) {
+      cps_value.innerHTML = this.value == 0 ? "Unlimited" : this.value;
+      store.set(MV_CPS_LSID, this.value);
+    };
+
     function removeOptions(selectElement) {
       for(var i = 0; i>=500; i++) {
-         selectElement.remove(0);
+        selectElement.remove(0);
       }
-   }
+    }
 
     ipcRenderer.on("refresh", async () => {
-      const $ = require('jquery');
+      const $ = require('../jquery.js');
       removeOptions(document.getElementById('keyboardpack-list'));
       $('#keyboardpack-list').find('optgroup').empty();
       $('#keyboardpack-list').find('optgroup').remove();
@@ -473,7 +503,15 @@ function packsToOptions(packs, pack_list, korm) {
       }
     });
 
+    var lastKeypress = null;
     iohook.on('mousedown', ({ button }) => {
+      // get the time of current keypress, compare with last keypress, send keypress if time difference is greater than 1000 / cps_value
+      if (lastKeypress && store.get(MV_CPS_LSID) != 0) {
+        const timeDiff = Date.now() - lastKeypress;
+        if (timeDiff < 1000 / store.get(MV_CPS_LSID)) {
+          return;
+        }
+      }
       if(playMouseSounds){
         if (current_mouse_down != null && current_mouse_down == button) {
           return;
@@ -487,6 +525,7 @@ function packsToOptions(packs, pack_list, korm) {
           playMouseSound(`${sound_id}`, store.get(MV_MOUSE_VOL_LSID), 'down')
         }
       }
+      lastKeypress = Date.now();
     })
 
     iohook.on('mouseup', () => {
@@ -519,6 +558,7 @@ function packsToOptions(packs, pack_list, korm) {
 
     // key pressed, pack current key and play sound
     iohook.on('keydown', ({ keycode }) => {
+      console.log("Key Down")
       // if hold down a key, not repeat the sound
       if (keyPressedList.includes(keycode)) {
         return;
@@ -561,6 +601,7 @@ function packsToOptions(packs, pack_list, korm) {
 // ==================================================
 // universal play function
 function playSound(sound_id, volume, playKeyupSound, downOrUp) {
+  console.log("Playing Sound")
 
   var initOne
   var initTwo
@@ -605,7 +646,7 @@ function playSound(sound_id, volume, playKeyupSound, downOrUp) {
           initOne = sound['_sprite'][keycode][0] //Start Time
           initTwo = sound['_sprite'][keycode][1] //Length
             sound['_sprite'][keycode][0] = initOne+Math.floor((initTwo/2)) //Start Time
-            sound['_sprite'][keycode][1] = Math.floor(initTwo/2) //Length
+            sound['_sprite'][keycode][1] = Math.floor(initTwo/2) //Lengthd
         }
         else{
           tempHoldings = sound['_sprite']['__default']
@@ -620,8 +661,10 @@ function playSound(sound_id, volume, playKeyupSound, downOrUp) {
   sound.volume(Number(volume / 100));
   if (play_type == 'single') {
     sound.play(keycode);
+    console.log(sound)
   } else {
     sound.play();
+    console.log(sound)
   }
 
       //Resetting values for non compat packs

@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="UTF-8" />
-    <title>Editor</title>
+    <title>Editor | Mechvibes++</title>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-    <link rel="shortcut icon" type="image/png" href="./assets/icon.png" />
-    <link href="./assets/style.css" rel="stylesheet" />
-    <link href="./assets/editor.css" rel="stylesheet" />
+    <link rel="shortcut icon" type="image/png" href="../images/icon.png" />
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/milligram.min.css" />
+    <link href="../css/editor.css" rel="stylesheet" />
   </head>
 
   <body>
+    <div id="navbar">
+        <a href="index.html"><img src="../images/icon_svgs/home.svg" alt="Home"></a>
+        <a href="soundpacks.html"><img src="../images/icon_svgs/soundpacks.svg" alt="Sounds"></a>
+        <a href="editor.html"><img src="../images/icon_svgs/editor.svg" alt="Editor"></a>
+        <a href="settings.html"><img src="../images/icon_svgs/settings.svg" alt="Settings"></a>
+    </div>
     <div class="container">
       <div class="header" style="display: flex; justify-content: space-between; align-items: center">
         <div style="margin-right: 10px"><img src="./assets/icon.png" alt="" style="width: 60px" /></div>
@@ -61,7 +70,7 @@
       </div>
     </div>
 
-    <script src="./assets/jquery.js"></script>
-    <script src="./editor.js"></script>
+    <script src="../javascript/jquery.js"></script>
+    <script src="../javascript/page-js/editor.js"></script>
   </body>
 </html>

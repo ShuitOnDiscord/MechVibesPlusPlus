@@ -1,12 +1,3 @@
-a,
-a:hover {
-  color: #ff5050;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
 #app-logo {
   display: flex;
   justify-content: center;
@@ -124,4 +115,13 @@ table tr td {
 
 table {
   margin-bottom: 0;
+}
+
+/* Position and style the close button (top right corner) */
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
 }

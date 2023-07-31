@@ -1,17 +1,23 @@
+// dependencies
+// npm install howler@2.1.2
+// npm install electron@6.1.5
+
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, Tray, Menu, shell, ipcMain } = require('electron');
+const { app, BrowserWindow, Tray, Menu, shell, ipcMain, Notification } = require('electron');
 const path = require('path');
 const fs = require('fs-extra');
-const StartupHandler = require('./utils/startup_handler');
-const ListenHandler = require('./utils/listen_handler');
-const KeyupHandler = require('./utils/keyup_handler');
-const MouseHandler = require('./utils/mouse_handler');
-const RandomHandler = require('./utils/random_handler');
+const StartupHandler = require('./utils/applicationjs/startup_handler.js');
+const ListenHandler = require('./utils/applicationjs/listen_handler.js');
+const KeyupHandler = require('./utils/applicationjs/keyup_handler.js');
+const MouseHandler = require('./utils/applicationjs/mouse_handler.js');
+const RandomHandler = require('./utils/applicationjs/random_handler.js');
+const { title } = require('process');
+const { Body } = require('node-fetch');
 
-const SYSTRAY_ICON = path.join(__dirname, '/assets/system-tray-icon.png');
+const SYSTRAY_ICON = path.join(__dirname, "./images/system-tray-icon.png");
 const home_dir = app.getPath('home');
-const keyboardcustom_dir = path.join(home_dir, '/mechvibes_custom');
-const mousecustom_dir = path.join(home_dir, '/mousevibes_custom');
+const keyboardcustom_dir = path.join(home_dir, './sounds/mechvibes_custom');
+const mousecustom_dir = path.join(home_dir, './sounds/mousevibes_custom');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -33,7 +39,7 @@ function createWindow(show = true) {
     // resizable: false,
     // fullscreenable: false,
     webPreferences: {
-      preload: path.join(__dirname, 'app.js'),
+      preload: path.join(__dirname, './utils/pagejs/app.js'),
       contextIsolation: false,
       nodeIntegration: true,
     },
@@ -41,14 +47,10 @@ function createWindow(show = true) {
   });
 
   // remove menu bar
-  win.removeMenu();
+  // win.removeMenu();
 
   // and load the index.html of the app.
-  win.loadFile('./src/app.html');
-
-  // Open the DevTools.
-  //win.openDevTools();
-  //win.webContents.openDevTools();
+  win.loadFile(path.join(__dirname, "./pages/index.html"));
 
   // Emitted when the window is closed.
   win.on('closed', function () {
@@ -68,11 +70,17 @@ function createWindow(show = true) {
 
   win.on('close', function (event) {
     if (!app.isQuiting) {
+      const hideNotif = new Notification({
+        title:"Mechvibes++ is still running",
+        body:"Mechvibes++ is still running. To close it, go through the system tray or settings",
+        icon: path.join(__dirname, "./images/icon.png")
+      });
       if (process.platform === 'darwin') {
         app.dock.hide();
       }
       event.preventDefault();
       win.hide();
+      hideNotif.show();
     }
     return false;
   });
@@ -108,7 +116,7 @@ if (!gotTheLock) {
   // Some APIs can only be used after this event occurs.
   // Don't show the window and create a tray instead
   // create and get window instance
-  app.on('ready', () => {
+  app.whenReady().then(() => {
     win = createWindow(true);
 
     // start tray icon
@@ -278,7 +286,7 @@ function openEditorWindow() {
 
   // editor_window.openDevTools();
 
-  editor_window.loadFile('./src/editor.html');
+  editor_window.loadFile('./pages/editor.html');
 
   editor_window.on('closed', function () {
     editor_window = null;

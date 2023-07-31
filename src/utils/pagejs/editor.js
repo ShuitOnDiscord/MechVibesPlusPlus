@@ -4,15 +4,15 @@ const fs = require('fs');
 const path = require('path');
 const { shell } = require('electron');
 
-const remapper = require('./utils/remapper');
-const layouts = require('./libs/layouts');
-const keycodes = require('./libs/keycodes');
-const $ = require('./assets/jquery');
+const remapper = require('../applicationjs/remapper.js');
+const layouts = require('../libs/layouts.js');
+const keycodes = require('../libs/keycodes.js');
+const $ = require('../jquery.js');
 
 const layout = layouts[process.platform];
 const { sizes } = layouts;
 const os_keycode = keycodes[process.platform];
-const CUSTOM_PACKS_DIR = path.join(__dirname, '../../../custom');
+const CUSTOM_PACKS_DIR = path.join(__dirname, '../../sounds');
 
 let selected_keycode = null;
 let current_edit_mode = 'visual';
